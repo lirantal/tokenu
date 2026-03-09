@@ -1,0 +1,14 @@
+# Source for more information: https://github.com/lirantal/npm-security-best-practices
+
+# Fail if a package's trust level has decreased (pnpm 10.21+)
+trustPolicy: no-downgrade
+
+# Allow specific packages or versions to bypass the check when needed
+# example:
+#trustPolicyExclude:
+#  - 'chokidar@4.0.3'
+#  - 'webpack@4.47.0 || 5.102.1'
+
+# Ignore the check for packages published more than 30 days ago (pnpm 10.27+)
+# Useful for older packages that pre-date provenance support
+trustPolicyIgnoreAfter: 43200  # minutes (30 days)

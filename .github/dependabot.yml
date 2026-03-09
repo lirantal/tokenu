@@ -1,0 +1,43 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: ".github/workflows"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      # Prefix all commit messages with "chore: "
+      prefix: "chore"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    commit-message:
+      # Prefix all commit messages with "chore: "
+      prefix: "chore"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # Use the 'dependencies' default label and add
+    # the 'automerge' one for automerge github action support
+    labels:
+      - "dependencies"
+      - "automerge"
+    groups:
+      # Production dependencies without breaking changes
+      dependencies:
+        dependency-type: "production"
+        update-types:
+        - "minor"
+        - "patch"
+      # Production dependencies with breaking changes
+      dependencies-major:
+        dependency-type: "production"
+        update-types:
+        - "major"
+      # Development dependencies
+      dev-dependencies:
+        dependency-type: "development"
+    # example for ignoring dependencies:
+    # ignore:
+    #   - dependency-name: tap
+    #     update-types: ["version-update:semver-major"]

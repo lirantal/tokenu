@@ -1,0 +1,28 @@
+{
+    "name": "Project Devcontainer",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
+    "mounts": [
+        "source=${localEnv:HOME}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached"
+    ],
+    // Initialize access to 1Password CLI in the container
+	// "initializeCommand": "echo OP_SERVICE_ACCOUNT_TOKEN=$(op read 'op://Private/1Password op CLI Service Account for DevContainers/password') > .env.development",
+	// "runArgs": [
+	// 	"--env-file",
+	// 	"${localWorkspaceFolder}/.env.development"
+	// ],
+    // --
+    "postCreateCommand": {
+        "git-setup": "git config --local commit.gpgsign false; git config --local core.pager \"less -R\";",
+        "pnpm-install": "pnpm install --force",
+        "post-create": "bash .devcontainer/post-create.sh"
+    },
+    "postStartCommand": {
+        // "rm-env-file": "rm -f ./.env.development",
+        "start-dev": "pnpm run dev"
+    },
+    "remoteUser": "node",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "containerEnv": {
+        "NODE_ENV": "development"
+    }
+}

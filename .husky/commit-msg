@@ -1,1 +1,1 @@
-npx --no validate-conventional-commit < .git/COMMIT_EDITMSG
+pnpm exec validate-conventional-commit < .git/COMMIT_EDITMSG

@@ -1,7 +1,7 @@
 {
   "name": "tokenu",
   "version": "0.0.1",
-  "description": "token usage",
+  "description": "a unix-like du command line tool to count token usage per files and directories",
   "types": "dist/main.d.ts",
   "type": "module",
   "bin": {
@@ -37,10 +37,9 @@
   "scripts": {
     "start": "node --import tsx src/bin/cli.ts",
     "build": "tsc && tsup",
-    "lint": "eslint . && npm run lint:lockfile && npm run lint:markdown",
+    "lint": "eslint . && pnpm run lint:markdown",
     "lint:markdown": "npx -y markdownlint-cli@0.45.0 -c .github/.markdownlint.yml -i '.git' -i '__tests__' -i '.github' -i '.changeset' -i 'CODE_OF_CONDUCT.md' -i 'CHANGELOG.md' -i 'docs/**' -i 'node_modules' -i 'dist' '**/**.md' --fix",
     "lint:fix": "eslint . --fix",
-    "lint:lockfile": "lockfile-lint --path pnpm-lock.yaml --validate-https --allowed-hosts npm",
     "test": "c8 node --import tsx --test __tests__/**/*.test.ts",
     "test:watch": "c8 node --import tsx --test --watch __tests__/**/*.test.ts",
     "coverage:view": "open coverage/lcov-report/index.html",
@@ -59,7 +58,13 @@
   },
   "license": "Apache-2.0",
   "keywords": [
-    "tokens"
+    "tokens",
+    "tokenizer",
+    "token usage",
+    "files token usage",
+    "token cost",
+    "gpt",
+    "token counter"
   ],
   "homepage": "https://github.com/lirantal/tokenu",
   "bugs": {
@@ -87,7 +92,7 @@
   },
   "lint-staged": {
     "**/*.{js,json}": [
-      "npm run lint:fix"
+      "pnpm run lint:fix"
     ]
   },
   "c8": {

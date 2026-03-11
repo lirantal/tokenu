@@ -5,6 +5,9 @@ logs
 npm-debug.log*
 pnpm-debug.log*
 
+# dist
+dist/
+
 # Runtime data
 pids
 *.pid

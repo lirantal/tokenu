@@ -2,7 +2,7 @@
   "name": "tokenu",
   "version": "0.0.1",
   "description": "a unix-like du command line tool to count token usage per files and directories",
-  "types": "dist/main.d.ts",
+  "types": "dist/main.d.mts",
   "type": "module",
   "bin": {
     "tokenu": "./dist/bin/cli.cjs"
@@ -10,7 +10,7 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/main.d.ts",
+        "types": "./dist/main.d.mts",
         "default": "./dist/main.mjs"
       },
       "require": {
@@ -20,7 +20,7 @@
       "default": "./dist/main.mjs"
     },
     "./dist/*": {
-      "types": "./dist/*.d.ts",
+      "types": "./dist/*.d.mts",
       "import": "./dist/*.mjs",
       "require": "./dist/*.cjs"
     }
@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "start": "node --import tsx src/bin/cli.ts",
-    "build": "tsc && tsup",
+    "build": "tsc && tsdown",
     "lint": "eslint . && pnpm run lint:markdown",
     "lint:markdown": "npx -y markdownlint-cli@0.48.0 -c .github/.markdownlint.yml -i '.git' -i '__tests__' -i '.github' -i '.changeset' -i 'CODE_OF_CONDUCT.md' -i 'CHANGELOG.md' -i 'docs/**' -i 'node_modules' -i 'dist' '**/**.md' --fix",
     "lint:fix": "eslint . --fix",
@@ -85,7 +85,7 @@
     "lint-staged": "^16.2.7",
     "lockfile-lint": "^4.14.0",
     "neostandard": "^0.12.2",
-    "tsup": "^8.1.0",
+    "tsdown": "^0.9.0",
     "tsx": "^4.19.4",
     "typescript": "^5.5.3",
     "validate-conventional-commit": "^1.0.4"

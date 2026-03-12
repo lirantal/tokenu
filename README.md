@@ -1,8 +1,14 @@
 <!-- markdownlint-disable -->
 
-<p align="center"><h1 align="center">
+<p align="center">
+  <h1 align="center">
   tokenu
-</h1>
+  </h1>
+</p>
+
+<p align="center">
+  <img width="1216" height="884" alt="tokenu-screenshot" src="https://github.com/user-attachments/assets/7186f3ec-505f-4db2-8927-81686462903b" />
+</p>
 
 <p align="center">
   A Unix <code>du</code>-like CLI that counts token usage per file and directory.

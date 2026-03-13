@@ -1,0 +1,7 @@
+{
+  "name": "tessl/npm-changesets--cli",
+  "version": "2.29.0",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/%40changesets/cli@2.29.6",
+  "summary": "Organise your package versioning and publishing to make both contributors and maintainers happy"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "tessl/npm-husky",
+  "version": "9.1.0",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/husky@9.1.7",
+  "summary": "Modern native Git hooks tool for enforcing code quality and running checks during development"
+}

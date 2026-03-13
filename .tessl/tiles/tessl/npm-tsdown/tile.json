@@ -1,0 +1,7 @@
+{
+  "name": "tessl/npm-tsdown",
+  "version": "0.14.0",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/tsdown@0.14.2",
+  "summary": "The Elegant Bundler for Libraries built on Rolldown with TypeScript support, comprehensive plugin ecosystem, and zero-configuration setup"
+}

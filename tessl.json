@@ -1,0 +1,43 @@
+{
+  "name": "my-project",
+  "mode": "vendored",
+  "dependencies": {
+    "mcollina/skills": {
+      "version": "3be5d25a3e3d92bf2281e731878f96a72253232a",
+      "source": "https://github.com/mcollina/skills",
+      "include": {
+        "skills": [
+          "octocat",
+          "typescript-magician"
+        ]
+      }
+    },
+    "tessl/npm-changesets--cli": {
+      "version": "2.29.0"
+    },
+    "tessl/npm-c8": {
+      "version": "10.1.0"
+    },
+    "tessl/npm-eslint": {
+      "version": "9.34.0"
+    },
+    "tessl/npm-husky": {
+      "version": "9.1.0"
+    },
+    "tessl/npm-lint-staged": {
+      "version": "16.1.0"
+    },
+    "tessl/npm-lockfile-lint": {
+      "version": "4.14.1"
+    },
+    "tessl/npm-tsdown": {
+      "version": "0.14.0"
+    },
+    "tessl/npm-tsx": {
+      "version": "4.20.0"
+    },
+    "tessl/npm-typescript": {
+      "version": "5.9.1"
+    }
+  }
+}

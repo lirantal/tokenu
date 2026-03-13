@@ -1,0 +1,8 @@
+{
+  "name": "tessl/npm-lockfile-lint",
+  "version": "4.14.1",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/lockfile-lint@4.14.1",
+  "summary": "A CLI to lint a lockfile for security policies",
+  "private": false
+}

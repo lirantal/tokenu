@@ -1,0 +1,7 @@
+{
+  "name": "tessl/npm-lint-staged",
+  "version": "16.1.0",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/lint-staged@16.1.6",
+  "summary": "Lint files staged by git"
+}

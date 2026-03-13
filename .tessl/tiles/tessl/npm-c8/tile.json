@@ -1,0 +1,7 @@
+{
+  "name": "tessl/npm-c8",
+  "version": "10.1.0",
+  "docs": "docs/index.md",
+  "describes": "pkg:npm/c8@10.1.3",
+  "summary": "Code coverage tool using Node.js' built-in V8 coverage functionality with Istanbul reporter compatibility"
+}

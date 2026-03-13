@@ -1,0 +1,27 @@
+{
+  "name": "mcollina/skills",
+  "version": "3be5d25a3e3d92bf2281e731878f96a72253232a",
+  "summary": "Auto-generated tile from GitHub (11 skills)",
+  "private": true,
+  "skills": {
+    "octocat": {
+      "path": "skills/octocat/SKILL.md"
+    },
+    "typescript-magician": {
+      "path": "skills/typescript-magician/SKILL.md"
+    }
+  },
+  "excludes": {
+    "skills": [
+      "documentation",
+      "fastify-best-practices",
+      "init",
+      "linting-neostandard-eslint9",
+      "node",
+      "nodejs-core",
+      "oauth",
+      "skill-optimizer",
+      "snipgrapher"
+    ]
+  }
+}

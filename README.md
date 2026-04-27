@@ -18,7 +18,7 @@
   <a href="https://www.npmjs.com/package/tokenu"><img src="https://badgen.net/npm/v/tokenu" alt="npm version"/></a>
   <a href="https://www.npmjs.com/package/tokenu"><img src="https://badgen.net/npm/license/tokenu" alt="license"/></a>
   <a href="https://www.npmjs.com/package/tokenu"><img src="https://badgen.net/npm/dt/tokenu" alt="downloads"/></a>
-  <a href="https://github.com/lirantal/tokenu/actions?workflow=CI"><img src="https://github.com/lirantal/tokenu/workflows/CI/badge.svg" alt="build"/></a>
+  <a href="https://github.com/lirantal/tokenu/actions/workflows/ci.yml"><img src="https://github.com/lirantal/tokenu/actions/workflows/ci.yml/badge.svg?branch=main" alt="build"/></a>
   <a href="https://app.codecov.io/gh/lirantal/tokenu"><img src="https://badgen.net/codecov/c/github/lirantal/tokenu" alt="codecov"/></a>
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Responsible Disclosure Policy" /></a>
 </p>

@@ -23,6 +23,21 @@
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Responsible Disclosure Policy" /></a>
 </p>
 
+## Why tokenu?
+
+When we needed to find out which folder was eating up disk space, we reached for the classic Linux `du` command. Today, when writing code with LLMs and AI agents, the question has changed: **which folder is eating up my context window?**
+
+Every time you feed files and directories into a prompt or a coding agent, it's easy to lose control — exceed the model's limits (GPT-5.5, Claude Opus 4.6, Sonnet 4.5, etc), or just burn money on unnecessary context. **tokenu** answers this question: run a single command and get a directory tree that reveals exactly how many tokens each part of your project consumes.
+
+### What can you do with it?
+
+- **Understand your project's token footprint** — before pasting a folder into an LLM, see how much of the context window it will consume.
+- **Find expensive files** — discover that one auto-generated JSON, lockfile, or bundle that silently blows up your token budget.
+- **Budget context for AI agents** — pipe `--json` output into an autonomous agent pipeline so the agent can plan which files to read within its "memory budget".
+- **Guard your context with hooks** — build a pre-read hook for tools like Claude Code that blocks or warns before loading files above a certain token threshold, preventing a single huge file from clogging the entire context.
+- **Compare encodings** — quickly see how token counts differ across models (`gpt-5.4` vs `claude-4.6-opus-high`) to estimate costs before switching.
+- **Audit before you ship** — verify that your published package or documentation stays within a reasonable token size for consumers who use AI-assisted workflows.
+
 ## Quick Start
 
 No install needed — run it directly with npx:
@@ -31,11 +46,37 @@ No install needed — run it directly with npx:
 npx tokenu .
 ```
 
-Or install it globally:
+### Real-World Recipes
+
+**Spot the context hog in your project:**
 
 ```sh
-npm install -g tokenu
+$ tokenu -d 1 -hs .
+1.2K	./src
+124	./docs
+48.7K	./dist
+890	./.github
+50.9K	.
 ```
+
+In this example `dist/` alone takes ~48K tokens — nearly the entire budget of some models. Now you know to exclude it or `.gitignore` it from your AI workflow.
+
+**Feed an AI agent its token budget:**
+
+```sh
+$ tokenu --json -s . | your-agent --context-budget 128000
+```
+
+The agent receives structured JSON with per-directory token counts and can decide which parts of the codebase to load, staying within its context window.
+
+**Quick-check a single file before pasting it into a prompt:**
+
+```sh
+$ tokenu -h data/large-fixture.json
+23.6K	data/large-fixture.json
+```
+
+If a single file costs 23K tokens you probably want to summarize it first rather than dump it raw into your prompt.
 
 ## Usage
 
@@ -104,6 +145,20 @@ Use a specific encoding for older models:
 
 ```sh
 $ tokenu --encoding cl100k_base .
+```
+
+## Install 
+
+Local install:
+
+```sh
+npm install tokenu
+```
+
+or globally install the tokenu package in your development environment:
+
+```sh
+npm install -g tokenu
 ```
 
 ## Contributing

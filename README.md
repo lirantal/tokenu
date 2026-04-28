@@ -179,6 +179,19 @@ Not directly. tokenu is a diagnostic tool — it reports token counts so *you* c
 
 Yes. Run `tokenu --json` to get structured output that an autonomous agent can consume programmatically. The agent can call tokenu, inspect the per-file and per-directory token counts, and decide which parts of the codebase fit within its context window — essentially giving it a "memory budget" to plan around.
 
+### Does tokenu use heuristics or actual tokenization?
+
+Actual tokenization. No estimation or approximation. tokenu reads every file, feeds its content through a real tokenizer (the [`gpt-tokenizer`](https://github.com/nicolo-ribaudo/gpt-tokenizer) library), and sums the results recursively across directories. The counts you see are the same counts the model would consume.
+
+You can also choose which tokenizer encoding to use. Different model families use different encodings, and token counts can vary between them. For example:
+
+```sh
+tokenu --model gpt-4o src/         # uses o200k_base (GPT-4o's encoding)
+tokenu --encoding cl100k_base src/ # uses cl100k_base (GPT-3.5/GPT-4)
+```
+
+By default tokenu uses `o200k_base`. See the [Options](#options) table for the full list of supported encodings.
+
 ### What's a practical example of using tokenu with coding agents?
 
 Imagine you're running Claude Code (or a similar coding agent) in a project that contains a huge `data.json` file. Without realizing it, the agent loads that file into context and it consumes your entire context window, leaving no room for actual code.

@@ -161,6 +161,30 @@ or globally install the tokenu package in your development environment:
 npm install -g tokenu
 ```
 
+## FAQ
+
+### Does tokenu replace token-saving tools like rtk?
+
+No. [rtk](https://github.com/rtk-ai/rtk) is a CLI proxy that sits between your AI agent and the shell, actively filtering and compressing command outputs to reduce token consumption by 60-90%. It rewrites commands like `git status` or `cargo test` to return compact, token-efficient output.
+
+**tokenu** does something different: it's a read-only measurement tool that tells you how many tokens your files and directories cost *before* they enter the context window. It doesn't modify or compress anything.
+
+Think of it this way: rtk shrinks the output your agent *receives* from shell commands, while tokenu helps you understand the token cost of the files and directories you *feed* into a prompt or agent. They complement each other — use tokenu to plan your context budget, and rtk to keep command outputs lean.
+
+### Does tokenu reduce my token usage?
+
+Not directly. tokenu is a diagnostic tool — it reports token counts so *you* can make informed decisions. For example, you might discover a 40K-token auto-generated file sitting in your project root and decide to exclude it from your AI workflow, saving real money and context space.
+
+### Can AI agents use tokenu?
+
+Yes. Run `tokenu --json` to get structured output that an autonomous agent can consume programmatically. The agent can call tokenu, inspect the per-file and per-directory token counts, and decide which parts of the codebase fit within its context window — essentially giving it a "memory budget" to plan around.
+
+### What's a practical example of using tokenu with coding agents?
+
+Imagine you're running Claude Code (or a similar coding agent) in a project that contains a huge `data.json` file. Without realizing it, the agent loads that file into context and it consumes your entire context window, leaving no room for actual code.
+
+With tokenu you can build a pre-read hook: before the agent reads any file, run `tokenu` on it. If the file exceeds a token threshold (say, 10K tokens), the hook can ask for confirmation or skip the file entirely. This keeps the agent focused on what matters.
+
 ## Contributing
 
 Please consult [CONTRIBUTING](./.github/CONTRIBUTING.md) for guidelines on contributing to this project.

@@ -181,7 +181,7 @@ Yes. Run `tokenu --json` to get structured output that an autonomous agent can c
 
 ### Does tokenu use heuristics or actual tokenization?
 
-Actual tokenization. No estimation or approximation. tokenu reads every file, feeds its content through a real tokenizer (the [`gpt-tokenizer`](https://github.com/nicolo-ribaudo/gpt-tokenizer) library), and sums the results recursively across directories. The counts you see are the same counts the model would consume.
+Actual tokenization. No estimation or approximation. tokenu reads every file, feeds its content through a real tokenizer (the [`gpt-tokenizer`](https://github.com/niieani/gpt-tokenizer) library), and sums the results recursively across directories. The counts you see are the same counts the model would consume.
 
 You can also choose which tokenizer encoding to use. Different model families use different encodings, and token counts can vary between them. For example:
 

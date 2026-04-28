@@ -1,6 +1,6 @@
 {
   "name": "tokenu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Unix du-like command line tool to count token usage per files and directories",
   "types": "dist/main.d.mts",
   "type": "module",

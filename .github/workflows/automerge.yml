@@ -19,9 +19,6 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    if: >
-      github.event_name != 'check_suite' ||
-      github.event.check_suite.pull_requests[0] != null
     permissions:
       contents: write
       pull-requests: write

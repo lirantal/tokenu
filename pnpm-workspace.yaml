@@ -1,19 +1,30 @@
-# Source for more information: https://github.com/lirantal/npm-security-best-practices
+# npm security best practices
+# Source: https://github.com/lirantal/npm-security-best-practices
+
+
+# Require at least 30 days since package release (specified in minutes)
+minimumReleaseAge: 43200
 
 # Fail if a package's trust level has decreased (pnpm 10.21+)
 trustPolicy: no-downgrade
 
 # Allow specific packages or versions to bypass the check when needed
 # example:
-#trustPolicyExclude:
-#  - 'chokidar@4.0.3'
-#  - 'webpack@4.47.0 || 5.102.1'
+# trustPolicyExclude:
+#   - 'chokidar@4.0.3'
+#   - 'webpack@4.47.0 || 5.102.1'
 
 # Ignore the check for packages published more than 30 days ago (pnpm 10.27+)
 # Useful for older packages that pre-date provenance support
-trustPolicyIgnoreAfter: 43200  # minutes (30 days)
+trustPolicyIgnoreAfter: 43200
 
-onlyBuiltDependencies:
-  - esbuild
-  - rolldown
-  - unrs-resolver
+allowBuilds:
+  esbuild: true
+  rolldown: true
+  unrs-resolver: true
+
+# Strictly enforce build dependencies, otherwise pnpm will error
+strictDepBuilds: true
+
+# Block exotic subdependencies such as those pulled from  Git sources
+blockExoticSubdeps: true

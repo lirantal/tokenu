@@ -200,7 +200,7 @@ With tokenu you can build a pre-read hook: before the agent reads any file, run 
 
 ## Contributing
 
-Please consult [CONTRIBUTING](./.github/CONTRIBUTING.md) for guidelines on contributing to this project.
+Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
 
 ## Author
 

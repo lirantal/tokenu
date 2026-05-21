@@ -5,7 +5,8 @@
   "types": "dist/main.d.mts",
   "type": "module",
   "bin": {
-    "tokenu": "./dist/bin/cli.cjs"
+    "tokenu": "./dist/bin/cli.cjs",
+    "tu": "./dist/bin/cli.cjs"
   },
   "exports": {
     ".": {

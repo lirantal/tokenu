@@ -46,6 +46,18 @@ No install needed — run it directly with npx:
 npx tokenu .
 ```
 
+Prefer a shorter command without installing tokenu globally? Add this alias to your shell config file, such as `~/.zshrc` or `~/.bashrc`:
+
+```sh
+alias tu='npx tokenu'
+```
+
+Then use `tu` anywhere you would use `tokenu`:
+
+```sh
+tu .
+```
+
 ### Real-World Recipes
 
 **Spot the context hog in your project:**

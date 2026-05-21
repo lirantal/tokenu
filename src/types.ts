@@ -15,6 +15,7 @@ export interface CliOptions {
   encoding: string
   model?: string
   exclude: string[]
+  smartIgnore?: boolean
   paths: string[]
 }
 

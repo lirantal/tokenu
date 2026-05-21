@@ -1,0 +1,5 @@
+# Root ignore rules
+ignored.txt
+dist/
+*.log
+!important.log

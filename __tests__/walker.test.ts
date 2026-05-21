@@ -1,10 +1,20 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert'
-import { resolve } from 'node:path'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
 import { countTokens } from 'gpt-tokenizer'
 import { countFileTokens, walkPath } from '../src/walker.ts'
+import type { TokenResult } from '../src/types.ts'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
+
+function collectPaths (result: TokenResult): string[] {
+  return [
+    result.path,
+    ...(result.children?.flatMap(collectPaths) ?? []),
+  ]
+}
 
 describe('countFileTokens', () => {
   test('counts tokens in a text file', async () => {
@@ -74,6 +84,72 @@ describe('walkPath', () => {
     const jsonChild = result.children?.find(c => c.path.endsWith('.json'))
     assert.strictEqual(jsonChild, undefined)
     assert.strictEqual(result.tokens, 34)
+  })
+
+  test('respects default and gitignore rules', async () => {
+    const result = await walkPath(
+      resolve(FIXTURES, 'gitignore'),
+      FIXTURES,
+      defaultOptions
+    )
+    const paths = collectPaths(result)
+
+    assert.ok(paths.includes('gitignore/included.txt'))
+    assert.ok(paths.includes('gitignore/important.log'))
+    assert.ok(paths.includes('gitignore/nested/visible.txt'))
+    assert.ok(paths.includes('gitignore/nested/keep.tmp'))
+    assert.ok(!paths.includes('gitignore/ignored.txt'))
+    assert.ok(!paths.includes('gitignore/app.log'))
+    assert.ok(!paths.includes('gitignore/dist'))
+    assert.ok(!paths.includes('gitignore/dist/bundle.txt'))
+    assert.ok(!paths.includes('gitignore/node_modules'))
+    assert.ok(!paths.includes('gitignore/node_modules/pkg/index.txt'))
+    assert.ok(!paths.includes('gitignore/nested/local.txt'))
+    assert.ok(!paths.includes('gitignore/nested/drop.tmp'))
+  })
+
+  test('can disable smart ignore rules', async () => {
+    const result = await walkPath(
+      resolve(FIXTURES, 'gitignore'),
+      FIXTURES,
+      { ...defaultOptions, smartIgnore: false }
+    )
+    const paths = collectPaths(result)
+
+    assert.ok(paths.includes('gitignore/ignored.txt'))
+    assert.ok(paths.includes('gitignore/app.log'))
+    assert.ok(paths.includes('gitignore/dist/bundle.txt'))
+    assert.ok(paths.includes('gitignore/node_modules/pkg/index.txt'))
+    assert.ok(paths.includes('gitignore/nested/local.txt'))
+    assert.ok(paths.includes('gitignore/nested/drop.tmp'))
+  })
+
+  test('skips .git directory by default and includes it when smart ignore is disabled', async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), 'tokenu-git-ignore-'))
+    const projectDir = join(tempDir, 'project')
+
+    try {
+      await mkdir(join(projectDir, '.git'), { recursive: true })
+      await writeFile(join(projectDir, '.git', 'HEAD'), 'ref: refs/heads/main\n')
+      await writeFile(join(projectDir, 'included.txt'), 'Included content.\n')
+
+      const defaultResult = await walkPath(projectDir, tempDir, defaultOptions)
+      const defaultPaths = collectPaths(defaultResult)
+      assert.ok(defaultPaths.includes('project/included.txt'))
+      assert.ok(!defaultPaths.includes('project/.git'))
+      assert.ok(!defaultPaths.includes('project/.git/HEAD'))
+
+      const noIgnoreResult = await walkPath(
+        projectDir,
+        tempDir,
+        { ...defaultOptions, smartIgnore: false }
+      )
+      const noIgnorePaths = collectPaths(noIgnoreResult)
+      assert.ok(noIgnorePaths.includes('project/.git'))
+      assert.ok(noIgnorePaths.includes('project/.git/HEAD'))
+    } finally {
+      await rm(tempDir, { recursive: true, force: true })
+    }
   })
 
   test('handles empty directory with empty file', async () => {

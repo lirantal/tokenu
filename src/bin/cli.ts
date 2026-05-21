@@ -20,6 +20,7 @@ Options:
       --encoding <enc>   Tokenizer encoding (default: o200k_base)
       --model <name>     Model name (e.g. gpt-4o, gpt-3.5-turbo)
       --exclude <pat>    Glob pattern to exclude (repeatable)
+      --no-ignore        Disable default .git, node_modules, and .gitignore skips
       --version          Print version and exit
       --help             Print this help and exit
 
@@ -57,6 +58,7 @@ async function main (): Promise<void> {
       encoding: { type: 'string' },
       model: { type: 'string' },
       exclude: { type: 'string', multiple: true },
+      'no-ignore': { type: 'boolean', default: false },
       version: { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
     },
@@ -100,6 +102,7 @@ async function main (): Promise<void> {
     encoding,
     model: values.model,
     exclude: excludePatterns,
+    smartIgnore: !(values['no-ignore'] ?? false),
     paths,
   }
 
@@ -110,6 +113,7 @@ async function main (): Promise<void> {
       encoding: cliOptions.encoding,
       model: cliOptions.model,
       exclude: cliOptions.exclude,
+      smartIgnore: cliOptions.smartIgnore,
     })
 
     let output: string

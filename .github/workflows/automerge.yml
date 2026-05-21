@@ -1,5 +1,19 @@
 name: automerge
+
+# Workflow-owned automerge gate.
+#
+# This intentionally does not rely on branch protection "required checks".
+# A PR is merged only when:
+# - it is open, not a draft, and comes from this repository (not a fork)
+# - it has the "automerge" label
+# - every GitHub status and check run visible on the PR head SHA is green
+# - the exact head SHA that was checked is still the PR head at merge time
+#
+# Limitation: GitHub workflows can only inspect checks/statuses that have been
+# created for the commit. The stability window below reduces races with
+# integrations that create checks shortly after CI starts or finishes.
 on:
+  # PR events catch label changes, new commits, reopen, and draft-to-ready.
   pull_request:
     types:
       - labeled
@@ -9,31 +23,180 @@ on:
       - edited
       - ready_for_review
       - reopened
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
-  check_suite:
+  # External integrations such as Snyk usually report check runs or commit
+  # statuses. These triggers re-run the gate when those reports complete.
+  check_run:
     types:
       - completed
+  status: {}
+
 jobs:
-  automerge:
+  automerge-gate:
+    name: automerge gate
     runs-on: ubuntu-latest
+    # Ignore this workflow's own completed check_run event, otherwise a skipped
+    # or successful automerge gate check can recursively trigger itself.
+    if: github.event_name != 'check_run' || github.event.check_run.name != 'automerge gate'
+    permissions:
+      checks: read
+      contents: read
+      pull-requests: read
+      statuses: read
+    outputs:
+      should_merge: ${{ steps.pr.outputs.should_merge }}
+      url: ${{ steps.pr.outputs.url }}
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+    steps:
+      - name: resolve pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          CHECK_RUN_SHA: ${{ github.event.check_run.head_sha }}
+          STATUS_SHA: ${{ github.event.sha }}
+        run: |
+          set -euo pipefail
+
+          # pull_request events already include the PR number. check_run/status
+          # events only include a commit SHA, so resolve the open PR for that SHA.
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$PULL_REQUEST_NUMBER" > pr.json
+          else
+            head_sha="$CHECK_RUN_SHA"
+            if [ "$EVENT_NAME" = "status" ]; then
+              head_sha="$STATUS_SHA"
+            fi
+
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$GITHUB_REPOSITORY/commits/$head_sha/pulls" > prs.json
+            jq 'map(select(.state == "open")) | .[0] // null' prs.json > pr.json
+          fi
+
+          # Events for branch pushes, closed PRs, or checks not attached to an
+          # open PR are not actionable.
+          if [ "$(jq -r 'type' pr.json)" = "null" ]; then
+            echo "No open pull request found for this event."
+            echo "should_merge=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Keep automerge opt-in and conservative: no drafts, no forks, and
+          # the explicit "automerge" label must be present.
+          if jq -e '.draft' pr.json > /dev/null; then
+            echo "Pull request is a draft."
+            echo "should_merge=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$(jq -r '.head.repo.full_name' pr.json)" != "$GITHUB_REPOSITORY" ]; then
+            echo "Pull request is from a fork."
+            echo "should_merge=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! jq -e 'any(.labels[].name; . == "automerge")' pr.json > /dev/null; then
+            echo "Pull request does not have the automerge label."
+            echo "should_merge=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Pass the PR URL and current head SHA to later steps. The merge step
+          # uses --match-head-commit so a newer untested SHA cannot be merged.
+          echo "should_merge=true" >> "$GITHUB_OUTPUT"
+          echo "number=$(jq -r '.number' pr.json)" >> "$GITHUB_OUTPUT"
+          echo "url=$(jq -r '.html_url' pr.json)" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$(jq -r '.head.sha' pr.json)" >> "$GITHUB_OUTPUT"
+
+      - name: wait for all checks to pass
+        if: steps.pr.outputs.should_merge == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          GATE_CHECK_NAME: automerge gate
+          # Require a stable green state for 4 consecutive 60s observations.
+          # This gives late-created checks/statuses a chance to appear before
+          # the merge happens.
+          GREEN_OBSERVATIONS_REQUIRED: "4"
+          MAX_ATTEMPTS: "60"
+          SLEEP_SECONDS: "60"
+        run: |
+          set -euo pipefail
+          green_observations=0
+
+          for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+            # Commit statuses are the older API used by some integrations.
+            gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/status" > statuses.json
+            # Check runs are the newer Checks API used by GitHub Actions and
+            # many security/code-quality integrations.
+            gh api --paginate "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs?per_page=100" \
+              --jq '.check_runs[]' > check-runs.jsonl
+
+            status_count="$(jq '.statuses | length' statuses.json)"
+            check_count="$(jq -s --arg gate "$GATE_CHECK_NAME" '[.[] | select(.name != $gate)] | length' check-runs.jsonl)"
+            non_success_statuses="$(jq -r '.statuses[] | select(.state != "success") | "\(.context): \(.state)"' statuses.json)"
+            non_success_checks="$(
+              jq -r \
+                --arg gate "$GATE_CHECK_NAME" \
+                'select(.name != $gate)
+                | select(.status != "completed" or .conclusion != "success")
+                | "\(.name): \(.status) / \(.conclusion // "pending")"' \
+                check-runs.jsonl
+            )"
+
+            # If nothing exists yet, do not treat that as green. A PR with zero
+            # reported checks/statuses should never be merged automatically.
+            if [ "$status_count" -eq 0 ] && [ "$check_count" -eq 0 ]; then
+              echo "No commit statuses or check runs found for $HEAD_SHA yet."
+              green_observations=0
+            elif [ -z "$non_success_statuses" ] && [ -z "$non_success_checks" ]; then
+              # One green observation is not enough because check runs can be
+              # created slightly after this gate starts. Wait for repeated green
+              # observations before merging.
+              green_observations=$((green_observations + 1))
+              echo "All visible checks passed for $HEAD_SHA ($green_observations/$GREEN_OBSERVATIONS_REQUIRED)."
+            else
+              # Any pending, queued, in-progress, failed, cancelled, timed-out,
+              # skipped, or neutral check resets the stability window.
+              green_observations=0
+              echo "Waiting for all checks to pass for $HEAD_SHA (attempt $attempt/$MAX_ATTEMPTS)."
+              if [ -n "$non_success_statuses" ]; then
+                echo "$non_success_statuses"
+              fi
+              if [ -n "$non_success_checks" ]; then
+                echo "$non_success_checks"
+              fi
+            fi
+
+            if [ "$green_observations" -ge "$GREEN_OBSERVATIONS_REQUIRED" ]; then
+              exit 0
+            fi
+
+            sleep "$SLEEP_SECONDS"
+          done
+
+          echo "Not all commit statuses and check runs passed for $HEAD_SHA."
+          exit 1
+
+  automerge:
+    name: merge pull request
+    runs-on: ubuntu-latest
+    needs: automerge-gate
+    if: needs.automerge-gate.outputs.should_merge == 'true'
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - id: automerge
-        name: automerge
-        uses: "pascalgn/automerge-action@v0.16.4"
+      - name: merge pull request
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          # we only merge PRs with labels of "dependencies" 
-          MERGE_LABELS: "automerge"
-          MERGE_READY_STATE: "clean,has_hooks,unknown"
-          MERGE_REMOVE_LABELS: "automerge"
-          MERGE_METHOD: "squash"
-          MERGE_COMMIT_MESSAGE: "automatic"
-          MERGE_FORKS: "false"
-          MERGE_REQUIRED_APPROVALS: "0"
-          UPDATE_METHOD: "rebase"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ needs.automerge-gate.outputs.url }}
+          HEAD_SHA: ${{ needs.automerge-gate.outputs.head_sha }}
+        run: |
+          # --match-head-commit is the final race guard: if the PR head changed
+          # after the gate checked it, GitHub refuses to merge.
+          gh pr merge "$PR_URL" \
+            --repo "$GITHUB_REPOSITORY" \
+            --squash \
+            --match-head-commit "$HEAD_SHA"

@@ -4,12 +4,14 @@ The `--exclude` flag lets you skip files or directories matching a given pattern
 
 ## Default Exclusions
 
-tokenu always excludes these directories by default:
+tokenu excludes these directories by default:
 
 - `node_modules`
 - `.git`
 
-These cannot be overridden.
+It also skips files and directories matched by `.gitignore` files discovered while walking.
+
+Use `--no-ignore` to disable these default smart ignores. Explicit `--exclude` patterns still apply when `--no-ignore` is used.
 
 ## Pattern Syntax
 
@@ -55,4 +57,4 @@ tokenu --json --exclude '*.lock' .
 
 - Patterns are matched against the file or directory name (not the full path)
 - The `--exclude` flag can be specified multiple times
-- Default exclusions (`node_modules`, `.git`) are always active
+- Default smart ignores (`node_modules`, `.git`, and `.gitignore` matches) are active unless `--no-ignore` is used

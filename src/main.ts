@@ -21,6 +21,7 @@ export async function walkAndCount (
       all: options.all,
       maxDepth: options.maxDepth,
       exclude: options.exclude,
+      smartIgnore: options.smartIgnore,
     })
     results.push(result)
   }

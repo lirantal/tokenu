@@ -55,6 +55,10 @@ Select encoding by model name (e.g., `gpt-4o`, `gpt-3.5-turbo`). Cannot be used 
 
 Exclude files matching the given pattern. Can be specified multiple times. See [exclude.md](exclude.md).
 
+### `--no-ignore`
+
+Disable the default smart ignore behavior. By default, tokenu skips `.git`, `node_modules`, and paths matched by `.gitignore` files discovered while walking directories. Explicit `--exclude` patterns still apply when `--no-ignore` is used.
+
 ### `--version`
 
 Print the version number and exit.

@@ -42,7 +42,7 @@ tokenu --json -s src/
 
 ## How It Works
 
-tokenu recursively walks the specified directories and files, reads each text file, and counts tokens using the [gpt-tokenizer](https://github.com/niieani/gpt-tokenizer) library. Binary files are automatically detected and skipped. Directories like `node_modules` and `.git` are excluded by default.
+tokenu recursively walks the specified directories and files, reads each text file, and counts tokens using the [gpt-tokenizer](https://github.com/niieani/gpt-tokenizer) library. Binary files are automatically detected and skipped. Directories like `node_modules` and `.git`, plus paths matched by discovered `.gitignore` files, are excluded by default. Use `--no-ignore` to include them.
 
 The default tokenizer encoding is `o200k_base`, which is used by modern OpenAI models (GPT-4o, GPT-4.1, o1, o3, etc.). You can select a different encoding with the `--encoding` or `--model` flags.
 
@@ -69,6 +69,7 @@ const results = await walkAndCount(['./src'], {
   all: true,
   encoding: 'o200k_base',
   exclude: [],
+  smartIgnore: true,
 })
 
 console.log(results)

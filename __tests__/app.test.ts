@@ -2,8 +2,16 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert'
 import { resolve } from 'node:path'
 import { walkAndCount } from '../src/main.ts'
+import type { TokenResult } from '../src/types.ts'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
+
+function collectPaths (result: TokenResult): string[] {
+  return [
+    result.path,
+    ...(result.children?.flatMap(collectPaths) ?? []),
+  ]
+}
 
 describe('walkAndCount (public API)', () => {
   test('counts tokens in a directory', async () => {
@@ -49,5 +57,17 @@ describe('walkAndCount (public API)', () => {
     const result = results[0]
     assert.ok(result)
     assert.ok(result.tokens > 0)
+  })
+
+  test('can disable smart ignore option', async () => {
+    const results = await walkAndCount(
+      [resolve(FIXTURES, 'gitignore')],
+      { all: true, encoding: 'o200k_base', exclude: [], smartIgnore: false }
+    )
+    const result = results[0]
+    assert.ok(result)
+    const paths = collectPaths(result)
+    assert.ok(paths.includes('gitignore/ignored.txt'))
+    assert.ok(paths.includes('gitignore/node_modules/pkg/index.txt'))
   })
 })

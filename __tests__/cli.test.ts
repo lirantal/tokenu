@@ -30,6 +30,7 @@ describe('CLI integration tests', () => {
     assert.ok(stdout.includes('Usage: tokenu'))
     assert.ok(stdout.includes('--summarize'))
     assert.ok(stdout.includes('--json'))
+    assert.ok(stdout.includes('--no-ignore'))
   })
 
   test('--version prints version number', async () => {
@@ -132,6 +133,32 @@ describe('CLI integration tests', () => {
     assert.strictEqual(code, 0)
     assert.ok(!stdout.includes('data.json'))
     assert.ok(stdout.includes('code.js'))
+  })
+
+  test('default smart ignore filters gitignored paths', async () => {
+    const { stdout, code } = await run('-a', resolve(FIXTURES, 'gitignore'))
+    assert.strictEqual(code, 0)
+    assert.ok(stdout.includes('included.txt'))
+    assert.ok(stdout.includes('important.log'))
+    assert.ok(stdout.includes('visible.txt'))
+    assert.ok(stdout.includes('keep.tmp'))
+    assert.ok(!stdout.includes('ignored.txt'))
+    assert.ok(!stdout.includes('app.log'))
+    assert.ok(!stdout.includes('bundle.txt'))
+    assert.ok(!stdout.includes('node_modules/pkg/index.txt'))
+    assert.ok(!stdout.includes('local.txt'))
+    assert.ok(!stdout.includes('drop.tmp'))
+  })
+
+  test('--no-ignore includes automatically ignored paths', async () => {
+    const { stdout, code } = await run('--no-ignore', '-a', resolve(FIXTURES, 'gitignore'))
+    assert.strictEqual(code, 0)
+    assert.ok(stdout.includes('ignored.txt'))
+    assert.ok(stdout.includes('app.log'))
+    assert.ok(stdout.includes('bundle.txt'))
+    assert.ok(stdout.includes('node_modules/pkg/index.txt'))
+    assert.ok(stdout.includes('local.txt'))
+    assert.ok(stdout.includes('drop.tmp'))
   })
 
   test('nonexistent path produces error', async () => {

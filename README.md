@@ -97,6 +97,7 @@ tokenu [options] [path...]
 | `--encoding <enc>` | Tokenizer encoding (default: `o200k_base`) |
 | `--model <name>` | Model name (e.g. `gpt-4o`, `gpt-3.5-turbo`) |
 | `--exclude <pat>` | Glob pattern to exclude (repeatable) |
+| `--no-ignore` | Disable default `.git`, `node_modules`, and `.gitignore` skips |
 
 Supported encodings: `o200k_base`, `o200k_harmony`, `cl100k_base`, `p50k_base`, `p50k_edit`, `r50k_base`
 
@@ -181,7 +182,7 @@ Yes. Run `tokenu --json` to get structured output that an autonomous agent can c
 
 ### Does tokenu use heuristics or actual tokenization?
 
-Actual tokenization. No estimation or approximation. tokenu reads every file, feeds its content through a real tokenizer (the [`gpt-tokenizer`](https://github.com/niieani/gpt-tokenizer) library), and sums the results recursively across directories. The counts you see are the same counts the model would consume.
+Actual tokenization. No estimation or approximation. tokenu reads each included file, feeds its content through a real tokenizer (the [`gpt-tokenizer`](https://github.com/niieani/gpt-tokenizer) library), and sums the results recursively across directories. It skips `.git`, `node_modules`, and files matched by `.gitignore` by default; pass `--no-ignore` to include them. The counts you see are the same counts the model would consume.
 
 You can also choose which tokenizer encoding to use. Different model families use different encodings, and token counts can vary between them. For example:
 

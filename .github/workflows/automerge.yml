@@ -114,7 +114,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          # Ignore this workflow's own job checks. Ineligible earlier runs can
+          # leave a skipped "merge pull request" check on the same SHA, and the
+          # gate itself is in progress while it is polling.
           GATE_CHECK_NAME: automerge gate
+          MERGE_CHECK_NAME: merge pull request
           # Require a stable green state for 4 consecutive 60s observations.
           # This gives late-created checks/statuses a chance to appear before
           # the merge happens.
@@ -134,12 +138,13 @@ jobs:
               --jq '.check_runs[]' > check-runs.jsonl
 
             status_count="$(jq '.statuses | length' statuses.json)"
-            check_count="$(jq -s --arg gate "$GATE_CHECK_NAME" '[.[] | select(.name != $gate)] | length' check-runs.jsonl)"
+            check_count="$(jq -s --arg gate "$GATE_CHECK_NAME" --arg merge "$MERGE_CHECK_NAME" '[.[] | select(.name != $gate and .name != $merge)] | length' check-runs.jsonl)"
             non_success_statuses="$(jq -r '.statuses[] | select(.state != "success") | "\(.context): \(.state)"' statuses.json)"
             non_success_checks="$(
               jq -r \
                 --arg gate "$GATE_CHECK_NAME" \
-                'select(.name != $gate)
+                --arg merge "$MERGE_CHECK_NAME" \
+                'select(.name != $gate and .name != $merge)
                 | select(.status != "completed" or .conclusion != "success")
                 | "\(.name): \(.status) / \(.conclusion // "pending")"' \
                 check-runs.jsonl

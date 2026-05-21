@@ -22,7 +22,7 @@ PRs are expected to meet a few baseline requirements before review:
 - **Linters and type checks must pass.** Run them locally before pushing; CI will reject otherwise.
 - **One logical change per PR.** Refactors, formatting churn, and unrelated fixes belong in separate PRs, it makes review and revert sane.
 - **Describe what and why.** A PR title and a few lines of context go a long way, reviewers shouldn't have to reverse-engineer your intent from the diff.
-- **Link the issue you're closing.** If your PR resolves an open issue, include a `Related issues` section in the description with `Fixes: #<issue-number>` (or `Closes: #<issue-number>`) so GitHub auto-closes it on merge.
+- **Link the issue you're closing.** If your PR resolves an open issue, include a `Related issues` section in the description with `Fixes: #<issue-number>` so GitHub auto-closes it on merge.
 - **Breaking changes need a heads-up** in the PR description, plus a migration note for users.
 
 Large or speculative changes: open an issue first to align on direction before investing time.

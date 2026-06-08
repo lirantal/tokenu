@@ -3,6 +3,4 @@ exclude = [
   # npmjs.com returns 403 Forbidden to automated link checkers
   "https://www.npmjs.com/.*",
   "https://www.npmjs.org/.*",
-  # GitHub occasionally returns transient 504 responses for workflow page URLs
-  "https://github.com/lirantal/tokenu/actions/workflows/ci.yml",
 ]

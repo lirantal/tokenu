@@ -7,10 +7,17 @@
     "allowJs": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": [
+      "node"
+    ],
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "target": "ES2022",
-    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "noEmit": true,
     "rootDir": "./src",
     "declaration": true,

@@ -27,9 +27,9 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0"
+    "pnpm": ">=11.0.0",
+    "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.31.0",
   "files": [
     "dist",
     "src",
@@ -115,5 +115,8 @@
       "lcov",
       "html"
     ]
+  },
+  "devEngines": {
+    "packageManager": { "name": "pnpm", "version": ">=11.0.0", "onFail": "download" }
   }
 }

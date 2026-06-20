@@ -211,6 +211,10 @@ Imagine you're running Claude Code (or a similar coding agent) in a project that
 
 With tokenu you can build a pre-read hook: before the agent reads any file, run `tokenu` on it. If the file exceeds a token threshold (say, 10K tokens), the hook can ask for confirmation or skip the file entirely. This keeps the agent focused on what matters.
 
+## Documentation
+
+- [Project documentation](./docs/README.md) - development, testing, architecture, and conventions.
+
 ## Contributing
 
 Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.

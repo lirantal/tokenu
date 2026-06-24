@@ -1,0 +1,31 @@
+# Testing
+
+## Test Command
+
+Run the test suite with:
+
+```sh
+pnpm test
+```
+
+## Linting
+
+Run lint checks with:
+
+```sh
+pnpm lint
+```
+
+## Markdown
+
+Run Markdown linting with:
+
+```sh
+pnpm lint:markdown
+```
+
+## Expectations
+
+- Add or update tests for behavior changes.
+- Run the relevant package-level checks before opening a PR.
+- Keep generated coverage, build output, and dependency folders out of commits.

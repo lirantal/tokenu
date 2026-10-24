@@ -254,8 +254,8 @@ importers:
         specifier: ^8.59.0
         version: 8.59.3(eslint@10.3.0(jiti@2.6.1)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
       validate-conventional-commit:
-        specifier: ^1.0.4
-        version: 1.0.4
+        specifier: ^2.0.0
+        version: 2.0.0
 
 packages:
 
@@ -1659,9 +1659,9 @@ packages:
     resolution: {integrity: sha512-kiGUalWN+rgBJ/1OHZsBtU4rXZOfj/7rKQxULKlIzwzQSvMJUUNgPwJEEh7gU6xEVxC0ahoOBvN2YI8GH6FNgA==}
     engines: {node: '>=10.12.0'}
 
-  validate-conventional-commit@1.0.4:
-    resolution: {integrity: sha512-RkkjpHE6qIF+BfujcFWTOAYE1Xj/Jz9oBMtlncLoqQVi5nGY/OwGgXjYolo8CNhH8xu6q7zSvciH0amTWkBvZg==}
-    engines: {node: '>=16.0.0'}
+  validate-conventional-commit@2.0.0:
+    resolution: {integrity: sha512-G78oL9Gzi7vmvXw73dU4XGYLnPie+i4nMYxvq0bypsKkONPQ6XwR1mD+POabU3SvjVhZejueYe+I6kQcrJxgMA==}
+    engines: {node: '>=20.0.0'}
     hasBin: true
 
   webidl-conversions@3.0.1:
@@ -3065,7 +3065,7 @@ snapshots:
       '@types/istanbul-lib-coverage': 2.0.6
       convert-source-map: 2.0.0
 
-  validate-conventional-commit@1.0.4: {}
+  validate-conventional-commit@2.0.0: {}
 
   webidl-conversions@3.0.1: {}
 

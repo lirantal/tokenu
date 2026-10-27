@@ -23,6 +23,8 @@ jobs:
           cache: 'pnpm'
       - name: install dependencies
         run: pnpm install --frozen-lockfile
+      - name: verify release formatter
+        run: pnpm exec prettier README.md > /dev/null
       - name: lint code
         run: pnpm run lint
       - name: build project

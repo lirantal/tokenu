@@ -26,6 +26,8 @@ jobs:
         with:
           node-version: 24.x
           cache: 'pnpm'
+      - name: Set up pinned npm
+        run: bash "${{ github.workspace }}/.github/scripts/setup-npm.sh"
       - name: install dependencies
         run: pnpm install --frozen-lockfile
       - name: build project
@@ -40,6 +42,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-          # Allow Changesets' internal npm calls to warn on pnpm-only devEngines instead of failing the release.
-          NPM_CONFIG_FORCE: true
           NPM_TOKEN: ''

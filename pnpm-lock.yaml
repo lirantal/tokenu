@@ -168,7 +168,7 @@ importers:
     dependencies:
       gpt-tokenizer:
         specifier: ^4.0.0
-        version: 4.0.0
+        version: 4.0.3
     devDependencies:
       '@changesets/changelog-github':
         specifier: ^1.0.1
@@ -1280,8 +1280,8 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
-  gpt-tokenizer@4.0.0:
-    resolution: {integrity: sha512-YAWIyzvuVUHEfW7tFfFAxH8qQb+Q3RU9nYOTy7skMNX5qzU6Q8jxTHZLyO56ug1vYvCR7wndzpd3jwD86/mhjQ==}
+  gpt-tokenizer@4.0.3:
+    resolution: {integrity: sha512-GrrPDreSy2c3ZgM/u+5JN+lnHTLrJKm7QAFfTD5J+vgcSP69C+fFIUaJWiey/QQ8lS5u79OvluKuEmGBAbOS4A==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -2648,7 +2648,7 @@ snapshots:
 
   globrex@0.1.2: {}
 
-  gpt-tokenizer@4.0.0: {}
+  gpt-tokenizer@4.0.3: {}
 
   graceful-fs@4.2.11: {}
 
